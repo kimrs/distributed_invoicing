@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS messaging-service-build-env-release
+WORKDIR /App
+
+COPY *.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish --runtime alpine-x64 --self-contained true -c Release -o out
+
+FROM alpine:3.12.1
+WORKDIR /App
+RUN apk add --no-cache openssh icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib wget
+COPY --from=messaging-service-build-env-release /App/out .
+ENTRYPOINT ["./MessagingService.Host"]

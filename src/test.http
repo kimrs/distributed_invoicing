@@ -1,0 +1,6 @@
+POST localhost:5001/api/Invoice
+content-type: application/json
+
+{
+    "Amount":"50.5"
+}
